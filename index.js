@@ -34,8 +34,7 @@ server.get('/',function(req,res){
             }
             res.render('ftp',{
                 "Folders":resultFolderList,
-                "Files":resultFileList,
-                "TargetPath":req.query.path
+                "Files":resultFileList
             });
         }
         
