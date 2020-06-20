@@ -11,14 +11,11 @@ server.get('/',function(req,res){
     var resultFileList = new Array();
     // res.send(path.join(ROOT_PATH,targetPath));
     if(!fs.existsSync(targetPath)){
-        // res.sendStatus(404);
-        res.send("1");
+        res.sendStatus(404);
         return;
     }
     if( targetPath != ROOT_PATH && !fs.realpathSync(targetPath).startsWith(ROOT_PATH)){
-        
-        // res.sendStatus(404);
-        res.send("2");
+        res.sendStatus(404);
         return;
     }
     fs.readdir(targetPath,(error, fileList)=>{
@@ -48,7 +45,15 @@ server.get('/download',(req,res)=>{
     if(!req.query.path){
         res.sendStatus(404);
     }
-    targetPath = path.join(ROOT_PATH,req.query.path);
+    var targetPath = path.join(ROOT_PATH,req.query.path);
+    if(!fs.existsSync(targetPath)){
+        res.sendStatus(404);
+        return;
+    }
+    if( targetPath != ROOT_PATH && !fs.realpathSync(targetPath).startsWith(ROOT_PATH)){
+        res.sendStatus(404);
+        return;
+    }
     res.download(targetPath);
 
 });
