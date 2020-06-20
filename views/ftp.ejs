@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>webFTP</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const requestPath = (urlParams.get('path') ? urlParams.get('path'):"").endsWith('/') ? (urlParams.get('path') ? urlParams.get('path'):"") : (urlParams.get('path') ? urlParams.get('path'):"")+"/";
+        
+        function GoToParent(){
+            location.href = "?path="+requestPath.slice(0,requestPath.slice(0,requestPath.length-1).lastIndexOf('/'));
+        }
+        function GoToPage(FolderName) {
+            location.href = "?path="+ requestPath + FolderName + "/";
+        }
+        function GetFile(FileName){
+            location.href = "download?path="+requestPath + FileName;
+            
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <table class="table table-striped table-hover table-sm">
+            <caption><%=Folders.length%> Folders <%=Files.length%> Files</caption>
+            <thead>
+                <tr>
+                    <th scope="col" width="15px"></th>
+                    <th scope="col" width="500px">Name</th>
+                    <th scope="col" width="100px">Size</th>
+                    <th scope="col" width="100px">Upload Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr onclick="javascript:GoToParent();">
+                    <th colspan="4" style="text-align: center;">상위로</th>
+                </tr>
+                <% for(var i=0; i<Folders.length; i++){ %>
+                <tr onclick="javascript:GoToPage('<%=Folders[i]%>');">
+                    <th scope="row">📁</th>
+                    <td><%=Folders[i]%></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <% } %>
+
+                <% for(var i=0; i<Files.length; i++){ %>
+                <tr onclick="javascript:GetFile('<%=Files[i]%>');">
+                    <th scope="row">📄</th>
+                    <td><%=Files[i]%></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <% } %>
+                <!-- <tr onclick="javascript:GoToPage('?path=dsfasdfsadfasdfa');">
+                    <th scope="row">📄</th>
+                    <td>grand prix.zip</td>
+                    <td>34,512 kb</td>
+                    <td>2020.05.20 12:34:56</td>
+                </tr> -->
+            </tbody>
+        </table>
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+</body>
+
+</html>
