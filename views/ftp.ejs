@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>webFTP</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="https://file.mingky.me/webftp/favicon.ico">
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const requestPath = (urlParams.get('path') ? urlParams.get('path'):"").endsWith('/') ? (urlParams.get('path') ? urlParams.get('path'):"") : (urlParams.get('path') ? urlParams.get('path'):"")+"/";
@@ -40,20 +41,20 @@
                     <th colspan="4" style="text-align: center;">상위로</th>
                 </tr>
                 <% for(var i=0; i<Folders.length; i++){ %>
-                <tr onclick="javascript:GoToPage('<%=Folders[i]%>');">
+                <tr onclick="javascript:GoToPage('<%=Folders[i].name%>');">
                     <th scope="row">📁</th>
-                    <td><%=Folders[i]%></td>
-                    <td></td>
-                    <td></td>
+                    <td><%=Folders[i].name%></td>
+                    <td><%=Folders[i].size%></td>
+                    <td><%=Folders[i].date%></td>
                 </tr>
                 <% } %>
 
                 <% for(var i=0; i<Files.length; i++){ %>
-                <tr onclick="javascript:GetFile('<%=Files[i]%>');">
+                <tr onclick="javascript:GetFile('<%=Files[i].name%>');">
                     <th scope="row">📄</th>
-                    <td><%=Files[i]%></td>
-                    <td></td>
-                    <td></td>
+                    <td><%=Files[i].name%></td>
+                    <td><%=Files[i].size%></td>
+                    <td><%=Files[i].date%></td>
                 </tr>
                 <% } %>
                 <!-- <tr onclick="javascript:GoToPage('?path=dsfasdfsadfasdfa');">
