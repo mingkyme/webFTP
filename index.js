@@ -1,15 +1,17 @@
 const express = require('express');
-const server = express();
-var fs = require('fs');
-var path = require('path');
+const fs = require('fs');
+const path = require('path');
+const dateFormat = require('dateformat');
 const ROOT_PATH = "/home/usb/ROOT/";
+var server = express();
 server.set('view engine','ejs');
 server.set('views',__dirname+'/views');
 server.get('/',function(req,res){
     var targetPath = req.query.path ? path.join(ROOT_PATH,req.query.path) : ROOT_PATH;
+
     var resultFolderList = new Array();
     var resultFileList = new Array();
-    // res.send(path.join(ROOT_PATH,targetPath));
+
     if(!fs.existsSync(targetPath)){
         res.sendStatus(404);
         return;
@@ -21,15 +23,17 @@ server.get('/',function(req,res){
     fs.readdir(targetPath,(error, fileList)=>{
         if(error){
             console.log(error);
-            
         }else{
             for (var i=0;i<fileList.length;i++){
+                var singleResult = new Object();
+                tempState = fs.lstatSync(path.join(targetPath,fileList[i]));
+                singleResult.name = fileList[i];
+                singleResult.size = BytesToSize(tempState.size);
+                singleResult.date = dateFormat(tempState.ctime,"yyyy-mm-dd HH:MM");
                 if(fs.statSync(path.join(targetPath,fileList[i])).isDirectory()){
-                    
-                    resultFolderList.push(fileList[i]);
-                    
+                    resultFolderList.push(singleResult);
                 }else{
-                    resultFileList.push(fileList[i]);
+                    resultFileList.push(singleResult);
                 }
             }
             res.render('ftp',{
@@ -59,3 +63,9 @@ server.get('/download',(req,res)=>{
 server.listen(10050, function () {
     console.log('Start Server');
 });
+function BytesToSize(bytes) {
+    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    if (bytes == 0) return '0 Byte';
+    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+    return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+ }
