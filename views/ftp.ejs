@@ -9,67 +9,167 @@
     <link rel="shortcut icon" href="https://file.mingky.me/webftp/favicon.ico">
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const requestPath = (urlParams.get('path') ? urlParams.get('path'):"").endsWith('/') ? (urlParams.get('path') ? urlParams.get('path'):"") : (urlParams.get('path') ? urlParams.get('path'):"")+"/";
+        const requestPath = (urlParams.get('path') ? urlParams.get('path') : "").endsWith('/') ? (urlParams.get('path') ? urlParams.get('path') : "") : (urlParams.get('path') ? urlParams.get('path') : "") + "/";
         
-        function GoToParent(){
-            location.href = "?path="+requestPath.slice(0,requestPath.slice(0,requestPath.length-1).lastIndexOf('/'));
+        function GoToParent() {
+            location.href = "?path=" + requestPath.slice(0, requestPath.slice(0, requestPath.length - 1).lastIndexOf('/'));
         }
         function GoToPage(FolderName) {
-            location.href = "?path="+ requestPath + FolderName + "/";
+            location.href = "?path=" + requestPath + FolderName + "/";
         }
-        function GetFile(FileName){
-            location.href = "download?path="+requestPath + FileName;
-            
+        function GetFile(FileName) {
+            location.href = "download?path=" + requestPath + FileName;
+
         }
     </script>
 </head>
 
 <body>
     <div class="container">
+        <h1 class="display-4">MINGKYME's webFTP</h1>
         <table class="table table-striped table-hover table-sm">
-            <caption><%=Folders.length%> Folders <%=Files.length%> Files</caption>
+            <caption><%=folders.length%> Folders <%=files.length%> Files</caption>
             <thead>
                 <tr>
-                    <th scope="col" width="15px"></th>
+                    <th scope="col" width="20px"></th>
                     <th scope="col" width="500px">Name</th>
                     <th scope="col" width="100px">Size</th>
-                    <th scope="col" width="100px">Upload Date</th>
+                    <th scope="col" width="100px">Date</th>
+                    <!-- <th scope="col" width="100px">Edit</th> -->
                 </tr>
             </thead>
             <tbody>
                 <tr onclick="javascript:GoToParent();">
-                    <th colspan="4" style="text-align: center;">상위로</th>
+                    <th colspan="5" style="text-align: center;">상위로</th>
                 </tr>
-                <% for(var i=0; i<Folders.length; i++){ %>
-                <tr onclick="javascript:GoToPage('<%=Folders[i].name%>');">
+                <% for(var i=0; i<folders.length; i++){ %>
+                <tr onclick="javascript:GoToPage('<%=folders[i].name%>');">
                     <th scope="row">📁</th>
-                    <td><%=Folders[i].name%></td>
-                    <td><%=Folders[i].size%></td>
-                    <td><%=Folders[i].date%></td>
+                    <td><%=folders[i].name%></td>
+                    <td><%=folders[i].size%></td>
+                    <td><%=folders[i].date%></td>
+                    
                 </tr>
                 <% } %>
 
-                <% for(var i=0; i<Files.length; i++){ %>
-                <tr onclick="javascript:GetFile('<%=Files[i].name%>');">
+                <% for(var i=0; i<files.length; i++){ %>
+                <tr onclick="javascript:GetFile('<%=files[i].name%>');">
                     <th scope="row">📄</th>
-                    <td><%=Files[i].name%></td>
-                    <td><%=Files[i].size%></td>
-                    <td><%=Files[i].date%></td>
+                    <td><%=files[i].name%></td>
+                    <td><%=files[i].size%></td>
+                    <td><%=files[i].date%></td>
+                    <!-- <td>
+                        <button class="btn btn-outline-primary">🖊️</button>
+                        <button class="btn btn-outline-success">🗑️</button>
+                    </td> -->
                 </tr>
                 <% } %>
-                <!-- <tr onclick="javascript:GoToPage('?path=dsfasdfsadfasdfa');">
-                    <th scope="row">📄</th>
-                    <td>grand prix.zip</td>
-                    <td>34,512 kb</td>
-                    <td>2020.05.20 12:34:56</td>
-                </tr> -->
             </tbody>
         </table>
-
+        <% if(isAdmin){ %>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#login" onclick="javascript:location.href = '/logout'">로그아웃</button>
+            <button class="btn" data-toggle="modal" data-target="#newfolder">새 폴더</button>
+            <button class="btn" data-toggle="modal" data-target="#upload">파일 업로드</button>
+        <%}else{%>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#login">관리자 로그인</button>
+        <%}%>
+        
     </div>
+        <% if(isAdmin){ %>
+<!-- New Folder -->
+<div class="modal fade" id="newfolder" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">새폴더</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="newFolderForm" action="/newFolder" method="POST">
+                    <div class="form-group">
+                        <label for="id">폴더 명을 입력하세요</label>
+                        <input type="text" class="form-control" id="id" name="name" placeholder="Enter folder name">
+                        <input type="hidden" class="form-control" id="folder_path" name="path">
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="javascript:document.getElementById('newFolderForm').submit();">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- File Upload -->
+<div class="modal fade" id="upload" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="uploadForm" action="/uploadFile" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="file">
+                    <input type="hidden" class="form-control" id="file_path" name="path">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="javascript:document.getElementById('uploadForm').submit();">Upload</button>
+            </div>
+        </div>
+    </div>
+</div>
+            <%}else{%>
+                <!-- Login -->
+    <div class="modal fade" id="login" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">로그인</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm" action="/login" method="POST">
+                        <div class="form-group">
+                            <label for="id">ID</label>
+                            <input type="text" class="form-control" id="id" name="id" placeholder="Enter ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="pw">Password</label>
+                            <input type="password" class="form-control" id="pw" name="pw" placeholder="Enter PW">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="javascript:document.getElementById('loginForm').submit();">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+            <%}%>
+    
+
+    
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <% if(isAdmin){ %>
+        <script>
+            document.getElementById('folder_path').value = requestPath;
+            document.getElementById('file_path').value = requestPath;
+        </script>
+    <% } %>
 </body>
 
 </html>
