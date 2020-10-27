@@ -2,16 +2,42 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const dateFormat = require('dateformat');
+const multer  = require('multer');
+const session = require('express-session');
+const FileStore = require('session-file-store')(session); // 1
 const ROOT_PATH = "/home/usb/ROOT/";
-var server = express();
-server.set('view engine','ejs');
-server.set('views',__dirname+'/views');
-server.get('/',function(req,res){
+const ADMIN_ID = "ID";
+const ADMIN_PW = "PW";
+var upload = multer({storage: multer.memoryStorage()});
+var app = express();
+app.use(express.json());
+app.use(express.urlencoded( {extended : false } ));
+app.use(session({  // 2
+    secret: 'SECRET_VALUE',
+    resave: false,
+    saveUninitialized: true,
+    store: new FileStore()
+  }));
+app.set('view engine','ejs');
+app.set('views',__dirname+'/views');
+app.post('/login',(req,res)=>{
+    if(req.body.id == ADMIN_ID && req.body.pw == ADMIN_PW){
+        req.session.logined = true;
+        res.redirect('/');
+    }else{
+        res.send("실패");
+    }
+});
+app.get('/logout',(req,res)=>{
+    req.session.destroy();
+    res.redirect('/');
+})
+app.get('/',function(req,res){
     var targetPath = req.query.path ? path.join(ROOT_PATH,req.query.path) : ROOT_PATH;
 
     var resultFolderList = new Array();
     var resultFileList = new Array();
-
+    
     if(!fs.existsSync(targetPath)){
         res.sendStatus(404);
         return;
@@ -37,14 +63,15 @@ server.get('/',function(req,res){
                 }
             }
             res.render('ftp',{
-                "Folders":resultFolderList,
-                "Files":resultFileList
+                "folders":resultFolderList,
+                "files":resultFileList,
+                "isAdmin":req.session.logined
             });
         }
         
     });
 });
-server.get('/download',(req,res)=>{
+app.get('/download',(req,res)=>{
     if(!req.query.path){
         res.sendStatus(404);
     }
@@ -60,8 +87,43 @@ server.get('/download',(req,res)=>{
     res.download(targetPath);
 
 });
-server.listen(10050, function () {
-    console.log('Start Server');
+app.post('/newFolder',(req,res)=>{
+    if(req.session.logined){
+        var targetPath = path.join(ROOT_PATH,req.body.path,req.body.name);
+        if(!targetPath.startsWith(ROOT_PATH)){
+            res.send("error");
+            return;
+        }
+        if(fs.existsSync(targetPath)){
+            res.send("이미 존재합니다.");
+        }else{
+            fs.mkdirSync(targetPath);
+            res.redirect('/');
+        };
+    }else{
+        res.send("실패");
+    }
+});
+app.post('/uploadFile',upload.single("file"), (req,res)=>{
+    if(req.session.logined){
+        var fileName = req.file.originalname;
+        var targetPath = path.join(ROOT_PATH,req.body.path,fileName);
+        if(!targetPath.startsWith(ROOT_PATH)){
+            res.send("error");
+            return;
+        }
+        if(fs.existsSync(targetPath)){
+            res.send("이미 존재합니다.");
+        }else{
+            fs.writeFileSync(targetPath,req.file.buffer);
+            res.redirect('/');
+        };
+    }else{
+        res.send("실패");
+    }
+});
+app.listen(10050, function () {
+    console.log('Start app');
 });
 function BytesToSize(bytes) {
     var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
