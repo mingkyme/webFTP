@@ -35,7 +35,9 @@
                     <th scope="col" width="500px">Name</th>
                     <th scope="col" width="100px">Size</th>
                     <th scope="col" width="100px">Date</th>
-                    <!-- <th scope="col" width="100px">Edit</th> -->
+                    <% if(isAdmin){ %>
+                    <th scope="col" width="100px">Edit</th>
+                    <%}%>
                 </tr>
             </thead>
             <tbody>
@@ -53,15 +55,17 @@
                 <% } %>
 
                 <% for(var i=0; i<files.length; i++){ %>
-                <tr onclick="javascript:GetFile('<%=files[i].name%>');">
+                <tr>
                     <th scope="row">📄</th>
-                    <td><%=files[i].name%></td>
+                    <td onclick="javascript:GetFile('<%=files[i].name%>');"><%=files[i].name%></td>
                     <td><%=files[i].size%></td>
                     <td><%=files[i].date%></td>
-                    <!-- <td>
-                        <button class="btn btn-outline-primary">🖊️</button>
-                        <button class="btn btn-outline-success">🗑️</button>
-                    </td> -->
+                    <% if(isAdmin){ %>
+                        <td>
+                            <button class="btn btn-outline-primary">🖊️</button>
+                            <button class="btn btn-outline-success">🗑️</button>
+                        </td>
+                    <% } %>
                 </tr>
                 <% } %>
             </tbody>

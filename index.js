@@ -37,7 +37,6 @@ app.get('/',function(req,res){
 
     var resultFolderList = new Array();
     var resultFileList = new Array();
-    
     if(!fs.existsSync(targetPath)){
         res.sendStatus(404);
         return;
@@ -62,6 +61,7 @@ app.get('/',function(req,res){
                     resultFileList.push(singleResult);
                 }
             }
+            console.log(req.session.logined);
             res.render('ftp',{
                 "folders":resultFolderList,
                 "files":resultFileList,
