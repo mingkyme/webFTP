@@ -5,15 +5,16 @@ const dateFormat = require('dateformat');
 const multer  = require('multer');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session); // 1
-const ROOT_PATH = "/home/usb/ROOT/";
-const ADMIN_ID = "ID";
-const ADMIN_PW = "PW";
+const password = require('./password/password.json')
+const ROOT_PATH = password.ROOT_PATH;
+const ADMIN_ID = password.ADMIN_ID;
+const ADMIN_PW = password.ADMIN_PW;
 var upload = multer({storage: multer.memoryStorage()});
 var app = express();
 app.use(express.json());
 app.use(express.urlencoded( {extended : false } ));
 app.use(session({  // 2
-    secret: 'SECRET_VALUE',
+    secret: password.SECRET,
     resave: false,
     saveUninitialized: true,
     store: new FileStore()
@@ -61,7 +62,6 @@ app.get('/',function(req,res){
                     resultFileList.push(singleResult);
                 }
             }
-            console.log(req.session.logined);
             res.render('ftp',{
                 "folders":resultFolderList,
                 "files":resultFileList,
