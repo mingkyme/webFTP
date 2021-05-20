@@ -87,7 +87,45 @@ app.get('/download',(req,res)=>{
     res.download(targetPath);
 
 });
-app.post('/newFolder',(req,res)=>{
+
+app.post('/file',upload.single("file"),function(req,res){
+    // upload file
+    if(req.session.logined){
+        var fileName = req.file.originalname;
+        var targetPath = path.join(ROOT_PATH,req.body.path,fileName);
+        if(!targetPath.startsWith(ROOT_PATH)){
+            res.send("error");
+            return;
+        }
+        if(fs.existsSync(targetPath)){
+            res.send("이미 존재합니다.");
+        }else{
+            fs.writeFileSync(targetPath,req.file.buffer);
+            res.redirect('/');
+        };
+    }else{
+        res.send("실패");
+    }
+});
+app.delete('/file',function(req,res){
+    // delete file
+    if(req.session.logined){
+        var fileName = req.file.originalname;
+        var targetPath = path.join(ROOT_PATH,req.body.path,fileName);
+        if(!targetPath.startsWith(ROOT_PATH)){
+            res.send("error");
+            return;
+        }
+        fs.unlink(targetPath,function(err){
+            if(err){
+                console.log(err);
+            }
+        })
+    }
+});
+
+app.put('/folder',function(req,res){
+    // new folder
     if(req.session.logined){
         var targetPath = path.join(ROOT_PATH,req.body.path,req.body.name);
         if(!targetPath.startsWith(ROOT_PATH)){
@@ -104,22 +142,19 @@ app.post('/newFolder',(req,res)=>{
         res.send("실패");
     }
 });
-app.post('/uploadFile',upload.single("file"), (req,res)=>{
+app.delete('/folder',function(req,res){
+    // delete folder
     if(req.session.logined){
-        var fileName = req.file.originalname;
-        var targetPath = path.join(ROOT_PATH,req.body.path,fileName);
+        var targetPath = path.join(ROOT_PATH,req.body.path,req.body.name);
         if(!targetPath.startsWith(ROOT_PATH)){
             res.send("error");
             return;
         }
-        if(fs.existsSync(targetPath)){
-            res.send("이미 존재합니다.");
-        }else{
-            fs.writeFileSync(targetPath,req.file.buffer);
-            res.redirect('/');
-        };
-    }else{
-        res.send("실패");
+        fs.rmdir(targetPath,function(err){
+            if(err){
+                console.log(err);
+            }
+        });
     }
 });
 app.listen(10050, function () {

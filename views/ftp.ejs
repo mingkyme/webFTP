@@ -87,7 +87,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="newFolderForm" action="/newFolder" method="POST">
+                <form id="newFolderForm" action="/folder" method="PUT">
                     <div class="form-group">
                         <label for="id">폴더 명을 입력하세요</label>
                         <input type="text" class="form-control" id="id" name="name" placeholder="Enter folder name">
@@ -115,7 +115,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="uploadForm" action="/uploadFile" method="POST" enctype="multipart/form-data">
+                <form id="uploadForm" action="/file" method="POST" enctype="multipart/form-data">
                     <input type="file" name="file">
                     <input type="hidden" class="form-control" id="file_path" name="path">
                 </form>
