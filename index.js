@@ -113,12 +113,15 @@ app.delete('/file',function(req,res){
         var fileName = req.body.path;
         var targetPath = path.join(ROOT_PATH,fileName);
         if(!targetPath.startsWith(ROOT_PATH)){
-            res.send("error");
+            res.sendStatus(500);
             return;
         }
         fs.unlink(targetPath,function(err){
             if(err){
+                res.sendStatus(404);
                 console.log(err);
+            }else{
+                res.sendStatus(200);
             }
         })
     }
