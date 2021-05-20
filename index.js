@@ -110,7 +110,7 @@ app.post('/file',upload.single("file"),function(req,res){
 app.delete('/file',function(req,res){
     // delete file
     if(req.session.logined){
-        var fileName = req.file.originalname;
+        var fileName = req.body.path;
         var targetPath = path.join(ROOT_PATH,req.body.path,fileName);
         if(!targetPath.startsWith(ROOT_PATH)){
             res.send("error");
