@@ -127,7 +127,7 @@ app.delete('/file',function(req,res){
     }
 });
 
-app.put('/folder',function(req,res){
+app.post('/folder',function(req,res){
     // new folder
     if(req.session.logined){
         var targetPath = path.join(ROOT_PATH,req.body.path,req.body.name);
