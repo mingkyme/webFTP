@@ -59,9 +59,9 @@
                     <th colspan="5" style="text-align: center;">상위로</th>
                 </tr>
                 <% for(var i=0; i<folders.length; i++){ %>
-                <tr onclick="javascript:GoToPage('<%=folders[i].name%>');">
+                <tr>
                     <th scope="row">📁</th>
-                    <td><%=folders[i].name%></td>
+                    <td><p style="display: inline; cursor: pointer;" onclick="javascript:GoToPage('<%=folders[i].name%>');"><%=folders[i].name%></p></td>
                     <td><%=folders[i].size%></td>
                     <td><%=folders[i].date%></td>
                     
