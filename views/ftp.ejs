@@ -56,7 +56,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <th colspan="5" style="text-align: center;"><p style="display: inline; text-decoration-line: underline; cursor: pointer;" onclick="javascript:GoToParent();">상위로</p></th>
+                    <th colspan="<%= isAdmin?5:4 %>" style="text-align: center;"><p style="display: inline; text-decoration-line: underline; cursor: pointer;" onclick="javascript:GoToParent();">상위로</p></th>
                 </tr>
                 <% for(var i=0; i<folders.length; i++){ %>
                 <tr>
