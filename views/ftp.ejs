@@ -71,7 +71,7 @@
                 <% for(var i=0; i<files.length; i++){ %>
                 <tr>
                     <th scope="row">📄</th>
-                    <td><p onclick="javascript:GetFile('<%=files[i].name%>');"><%=files[i].name%></p></td>
+                    <td><p style="display: inline; text-decoration-line: underline; cursor: pointer;" onclick="javascript:GetFile('<%=files[i].name%>');"><%=files[i].name%></p></td>
                     <td><%=files[i].size%></td>
                     <td><%=files[i].date%></td>
                     <% if(isAdmin){ %>
