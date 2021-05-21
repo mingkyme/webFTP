@@ -22,7 +22,8 @@
             location.href = "download?path=" + requestPath + FileName;
         }
         function DeleteFile(FileName){
-            axios({
+            if(confirm(FileName+"를 삭제하시겠습니까?")){
+                axios({
                 method: 'DELETE',
                 url: '/file',
                 data: {
@@ -32,6 +33,7 @@
             .then(function(response){
                 location.reload();
             });
+            }
         }
     </script>
 </head>
