@@ -64,7 +64,9 @@
                     <td><p style="display: inline; text-decoration-line: underline; cursor: pointer;" onclick="javascript:GoToPage('<%=folders[i].name%>');"><%=folders[i].name%></p></td>
                     <td><%=folders[i].size%></td>
                     <td><%=folders[i].date%></td>
-                    
+                    <% if(isAdmin){ %>
+                        <td></td>
+                    <% } %>
                 </tr>
                 <% } %>
 
