@@ -5,16 +5,17 @@ const dateFormat = require('dateformat');
 const multer  = require('multer');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session); // 1
-const password = require('./password/password.json')
-const ROOT_PATH = password.ROOT_PATH;
-const ADMIN_ID = password.ADMIN_ID;
-const ADMIN_PW = password.ADMIN_PW;
+require('dotenv').config();
+
+const ROOT_PATH = process.env.ROOT_PATH;
+const ADMIN_ID = process.env.ADMIN_ID;
+const ADMIN_PW = process.env.ADMIN_PW;
 var upload = multer({storage: multer.memoryStorage()});
 var app = express();
 app.use(express.json());
 app.use(express.urlencoded( {extended : false } ));
 app.use(session({  // 2
-    secret: password.SECRET,
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
     store: new FileStore()
